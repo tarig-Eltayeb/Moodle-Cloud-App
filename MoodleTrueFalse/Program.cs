@@ -1,13 +1,17 @@
-﻿var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddScoped<MoodleTrueFalse.Api.Services.XmlGenerationService>();
+﻿var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    Args = args,
+    WebRootPath = "wwwroot"
+});
 
 // Add services to the container.
+builder.Services.AddScoped<MoodleTrueFalse.Api.Services.XmlGenerationService>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    // هذا السطر يجعل الخادم لا يهتم بحالة الأحرف في أسماء حقول JSON
     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
 });
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", builder =>
@@ -17,7 +21,7 @@ builder.Services.AddCors(options =>
                .AllowAnyHeader();
     });
 });
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -30,11 +34,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// تم تعطيل هذا السطر لأنه قد يسبب مشاكل في بيئة Railway
 // app.UseHttpsRedirection();
+
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.UseAuthorization();
+
 app.UseCors("AllowAll");
 
 app.MapControllers();
