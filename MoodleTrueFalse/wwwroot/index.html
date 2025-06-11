@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moodle T/F Question Generator</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" integrity="sha384-nU14brUcp6StFntEOOEBvcJm4huWjB0OcIeQ3fltAfSmuZFrkAif0T+UtNGlKKQv" crossorigin="anonymous">
+    <!-- استيراد Bootstrap للتصميم -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" xintegrity="sha384-nU14brUcp6StFntEOOEBvcJm4huWjB0OcIeQ3fltAfSmuZFrkAif0T+UtNGlKKQv" crossorigin="anonymous">
+    <!-- استيراد أيقونات Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
         body {
@@ -23,22 +26,25 @@
 
             .list-group-item .question-text {
                 flex-grow: 1;
-            }
-
-            .list-group-item .badge {
                 margin-right: 15px;
             }
 
-        /* <<< بداية الكود الجديد >>> */
         #questions-list {
-            max-height: 9rem; /* ارتفاع تقريبي لـ 3 عناصر، يمكنك تعديل هذه القيمة */
-            overflow-y: auto; /* إظهار شريط التمرير العمودي عند الحاجة فقط */
+            max-height: 9rem;
+            overflow-y: auto;
+        }
+        /* <<< بداية الكود الجديد >>> */
+        .footer {
+            padding: 2rem 0;
+            margin-top: 3rem;
+            border-top: 1px solid #dee2e6;
+            font-size: 0.9rem;
+            color: #6c757d;
         }
         /* <<< نهاية الكود الجديد >>> */
-
     </style>
 </head>
-<body class="py-5">
+<body class="py-4">
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h1 class="mb-0">مولّد أسئلة الصواب والخطأ</h1>
@@ -53,10 +59,12 @@
             </div>
         </div>
 
+        <!-- قسم إدخال الأسئلة -->
         <div class="card mb-4">
             <div class="card-body">
                 <h5 class="card-title">إضافة سؤال جديد</h5>
                 <form id="question-form">
+                    <!-- ... حقول الإدخال ... -->
                     <div class="mb-3">
                         <label for="q-name" class="form-label">اسم السؤال (اختياري)</label>
                         <input type="text" id="q-name" class="form-control" placeholder="مثال: سؤال عن عاصمة السعودية">
@@ -83,19 +91,39 @@
             </div>
         </div>
 
+        <!-- قسم قائمة الأسئلة -->
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">قائمة الأسئلة (<span id="question-count">0</span>)</h5>
-                <ul id="questions-list" class="list-group mb-3"></ul>
+                <ul id="questions-list" class="list-group mb-3">
+                    <!-- سيتم إضافة الأسئلة هنا باستخدام JavaScript -->
+                </ul>
                 <button id="export-button" class="btn btn-success btn-lg w-100" disabled>تصدير ملف XML</button>
             </div>
         </div>
+
+        <!-- <<< بداية القسم الجديد: الفوتر >>> -->
+        <footer class="footer text-center">
+            <p>
+                تم تطوير هذه الأداة بواسطة: <strong>طارق محمد ابوزيد</strong>
+            </p>
+            <p>
+                للتواصل والمتابعة:
+                <a href="https://www.facebook.com/tarig.abuzied/" target="_blank" class="text-decoration-none">
+                    <i class="bi bi-facebook"></i> صفحتي على فيسبوك
+                </a>
+            </p>
+        </footer>
+        <!-- <<< نهاية القسم الجديد >>> -->
     </div>
 
-    <input type="file" id="file-input" accept=".json, .tfq" style="display: none;">
+    <!-- عنصر إدخال الملفات المخفي -->
+    <input type="file" id="file-input" accept=".json, .tfq.json" style="display: none;">
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <!-- استيراد JavaScript الخاص بـ Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 
+    <!-- الكود الخاص بنا (لم يتغير) -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // 1. الحصول على جميع عناصر الواجهة
@@ -106,12 +134,9 @@
             const exportButton = document.getElementById('export-button');
             const questionCountSpan = document.getElementById('question-count');
             const submitButton = questionForm.querySelector('button[type="submit"]');
-
-            // <<< بداية الإضافات الجديدة للحفظ والفتح >>>
             const saveProjectBtn = document.getElementById('save-project-btn');
             const openProjectBtn = document.getElementById('open-project-btn');
             const fileInput = document.getElementById('file-input');
-            // <<< نهاية الإضافات الجديدة >>>
 
             // 2. مخزن البيانات
             let questions = [];
@@ -121,15 +146,11 @@
             questionForm.addEventListener('submit', handleFormSubmit);
             questionsList.addEventListener('click', handleListClick);
             exportButton.addEventListener('click', handleExport);
-
-            // <<< بداية ربط الأحداث الجديدة >>>
             saveProjectBtn.addEventListener('click', handleSaveProject);
-            openProjectBtn.addEventListener('click', () => fileInput.click()); // عند الضغط على "فتح"، نقوم بمحاكاة النقر على حقل الملفات المخفي
+            openProjectBtn.addEventListener('click', () => fileInput.click());
             fileInput.addEventListener('change', handleFileSelected);
-            // <<< نهاية ربط الأحداث الجديدة >>>
 
             function renderQuestions() {
-                // ... هذه الوظيفة تبقى كما هي بدون تغيير
                 questionsList.innerHTML = '';
                 if (questions.length === 0) {
                     questionsList.innerHTML = '<li class="list-group-item text-muted">لم تتم إضافة أي أسئلة بعد.</li>';
@@ -139,15 +160,15 @@
                         listItem.className = 'list-group-item';
                         const answerBadge = question.isTrue ? '<span class="badge bg-success">صح</span>' : '<span class="badge bg-danger">خطأ</span>';
                         listItem.innerHTML = `
-                    <div class="question-text">
-                        ${answerBadge}
-                        <strong>${question.name}</strong>
-                    </div>
-                    <div>
-                        <button class="btn btn-secondary btn-sm me-2" data-action="edit" data-index="${index}">تعديل</button>
-                        <button class="btn btn-danger btn-sm" data-action="delete" data-index="${index}">حذف</button>
-                    </div>
-                `;
+                                <div class="question-text">
+                                    ${answerBadge}
+                                    <strong>${question.name}</strong>
+                                </div>
+                                <div>
+                                    <button class="btn btn-secondary btn-sm me-2" data-action="edit" data-index="${index}">تعديل</button>
+                                    <button class="btn btn-danger btn-sm" data-action="delete" data-index="${index}">حذف</button>
+                                </div>
+                            `;
                         questionsList.appendChild(listItem);
                     });
                 }
@@ -155,7 +176,6 @@
                 exportButton.disabled = questions.length === 0;
             }
 
-            // ... وظائف `handleListClick`, `handleFormSubmit`, `resetForm` تبقى كما هي ...
             function handleListClick(event) {
                 const action = event.target.dataset.action;
                 const index = parseInt(event.target.dataset.index, 10);
@@ -174,6 +194,7 @@
                     submitButton.classList.add('btn-warning');
                 }
             }
+
             function handleFormSubmit(event) {
                 event.preventDefault();
                 let name = questionNameInput.value.trim();
@@ -190,6 +211,7 @@
                 resetForm();
                 renderQuestions();
             }
+
             function resetForm() {
                 questionForm.reset();
                 questionNameInput.value = '';
@@ -198,6 +220,7 @@
                 submitButton.classList.remove('btn-warning');
                 submitButton.classList.add('btn-primary');
             }
+
             async function handleExport() {
                 if (questions.length === 0) return;
                 exportButton.disabled = true;
@@ -227,64 +250,39 @@
                 }
             }
 
-
-            // <<< بداية الوظائف الجديدة للحفظ والفتح >>>
-            /**
-             * وظيفة لحفظ المشروع الحالي كملف JSON
-             */
             function handleSaveProject(event) {
-                event.preventDefault(); // منع السلوك الافتراضي للرابط
-
+                event.preventDefault();
                 if (questions.length === 0) {
                     alert('لا توجد أسئلة لحفظها.');
                     return;
                 }
-
-                // تحويل مصفوفة الأسئلة إلى نص JSON منسق
                 const jsonString = JSON.stringify(questions, null, 2);
                 const blob = new Blob([jsonString], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
-
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'project.tfq.json'; // امتداد مخصص لملف المشروع
+                a.download = 'project.tfq.json';
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
             }
 
-            /**
-             * وظيفة يتم استدعاؤها عند اختيار المستخدم لملف لفتحه
-             */
-            /**
-     * وظيفة يتم استدعاؤها عند اختيار المستخدم لملف لفتحه
-     */
             function handleFileSelected(event) {
                 const file = event.target.files[0];
-                if (!file) {
-                    return;
-                }
-
+                if (!file) { return; }
                 const reader = new FileReader();
-
                 reader.onload = function (e) {
                     try {
                         const content = e.target.result;
                         const loadedData = JSON.parse(content);
-
-                        // <<< بداية الكود الجديد والمهم: توحيد شكل البيانات >>>
-                        // هذا الكود يتأكد من أنه قادر على قراءة كلا الصيغتين
                         const standardizedQuestions = loadedData.map(q => ({
-                            name: q.Name || q.name, // استخدم الحرف الكبير، وإذا لم تجده استخدم الصغير
+                            name: q.Name || q.name,
                             text: q.Text || q.text,
-                            // بالنسبة لـ IsTrue، التحقق أكثر دقة لتجنب المشاكل
                             isTrue: q.IsTrue !== undefined ? q.IsTrue : q.isTrue
                         }));
-                        // <<< نهاية الكود الجديد والمهم >>>
-
                         if (Array.isArray(standardizedQuestions)) {
-                            questions = standardizedQuestions; // نستخدم البيانات الموحدة
+                            questions = standardizedQuestions;
                             renderQuestions();
                             alert(`تم تحميل ${questions.length} سؤال بنجاح.`);
                         } else {
@@ -295,15 +293,13 @@
                         alert('عفوًا، لا يمكن قراءة هذا الملف. تأكد من أنه ملف مشروع صحيح.');
                     }
                 };
-
                 reader.readAsText(file);
                 fileInput.value = '';
             }
-            // <<< نهاية الوظائف الجديدة >>>
 
-            // استدعاء `renderQuestions` لأول مرة عند تحميل الصفحة
             renderQuestions();
         });
     </script>
 </body>
 </html>
+
